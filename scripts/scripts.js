@@ -9,6 +9,9 @@ const gameGrid = [];
 const towers = [];
 const towerCost = 100;
 let numberOfResources = 300;
+const invaders = [];
+const invaderPositions = [];
+let frame = 0;
 
 const mouse = {
   x: 0,
@@ -29,7 +32,7 @@ canvas.addEventListener('mouseleave', function () {
   mouse.y = undefined;
 });
 
-// grid
+// board
 class Cell {
   constructor(x, y) {
     this.x = x;
@@ -86,25 +89,81 @@ class Tower {
     );
   }
 }
-canvas.addEventListener('click', function () {
-  const gridPositionX = mouse.x - (mouse.x % cellSize);
-  const gridPositionY = mouse.y - (mouse.y % cellSize);
-  const towerCost = 100;
-  if (numberOfResources >= towerCost) {
-    towers.push(new Tower(gridPositionX, gridPositionY));
-    numberOfResources -= towerCost;
-  }
-});
+
 function handleTowers() {
   for (let i = 0; i < towers.length; i++) {
     towers[i].draw();
   }
 }
 
+// invaders
+class Invader {
+  constructor(verticalPosition) {
+    this.x = canvas.width;
+    this.y = verticalPosition;
+    this.width = cellSize;
+    this.height = cellSize;
+    this.speed = Math.random() * 0.2 + 0.4;
+    this.movement = this.speed;
+    this.health = 100;
+    this.maxHealth = this.health;
+  }
+
+  update() {
+    this.x -= this.movement;
+  }
+  draw() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.fillStyle = 'red';
+    ctx.font = '20px Helvetica';
+    ctx.fillText(
+      Math.floor(this.health),
+      this.x + cellSize / 2,
+      this.y + cellSize / 2
+    );
+  }
+}
+
+function handleInvaders() {
+  for (let i = 0; i < invaders.length; i++) {
+    invaders[i].update();
+    invaders[i].draw();
+  }
+  if (frame % 100 === 0) {
+    let verticalPosition = Math.floor(Math.random() * 5 + 1) * cellSize;
+    invaders.push(new Invader(verticalPosition));
+    invaderPositions.push(verticalPosition);
+  }
+}
+
+canvas.addEventListener('click', function () {
+  const gridPositionX = mouse.x - (mouse.x % cellSize);
+  const gridPositionY = mouse.y - (mouse.y % cellSize);
+  for (let i = 0; i < towers.length; i++) {
+    if (towers[i].x === gridPositionX && towers[i].y === gridPositionY) return;
+  }
+  const towerCost = 100;
+  if (numberOfResources >= towerCost) {
+    towers.push(new Tower(gridPositionX, gridPositionY));
+    numberOfResources -= towerCost;
+  }
+});
+
+// helpers
+function handleGameStatus() {
+  ctx.fillStyle = 'black';
+  ctx.font = '20px Helvetica';
+  ctx.fillText(`Resources: ${numberOfResources}`, 0, 60);
+}
+
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   handleGameGrid();
   handleTowers();
+  handleInvaders();
+  handleGameStatus();
+  frame++;
   requestAnimationFrame(animate);
 }
 animate();

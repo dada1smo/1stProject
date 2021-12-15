@@ -9,16 +9,17 @@ const cellGap = 4;
 const gameGrid = [];
 const towers = [];
 const towerCost = 100;
-let numberOfResources = 300;
 const invaders = [];
 const invaderPositions = [];
 const invaderInterval = 600;
+const projectiles = [];
+const resources = [];
+
+let numberOfResources = 300;
 let frame = 0;
 let gameOver = false;
 let score = 0;
 let winningScore = 100;
-const projectiles = [];
-const resources = [];
 
 const mouse = {
   x: 0,
@@ -307,6 +308,8 @@ function handleGameStatus() {
   }
 }
 
+let reqAnim;
+
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   handleGameGrid();
@@ -317,10 +320,17 @@ function animate() {
   handleGameStatus();
   frame++;
   if (!gameOver && score < winningScore) {
-    requestAnimationFrame(animate);
+    reqAnim = requestAnimationFrame(animate);
+    console.log(reqAnim);
   }
 }
-animate();
+
+function stopAnimation() {
+  cancelAnimationFrame(reqAnim);
+  reqAnim = 0;
+  console.log(reqAnim);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
 function collision(first, second) {
   if (
@@ -339,5 +349,17 @@ window.addEventListener('resize', () => {
   canvasPosition = canvas.getBoundingClientRect();
 });
 
-console.log(towers);
-console.log(invaders);
+const startGameBtn = document.getElementById('startGame');
+const reloadGameBtn = document.getElementById('reloadGame');
+startGameBtn.onclick = () => {
+  animate();
+  startGameBtn.setAttribute('disabled', 'true');
+  reloadGameBtn.removeAttribute('disabled');
+};
+reloadGameBtn.onclick = () => {
+  stopAnimation();
+  startGameBtn.removeAttribute('disabled');
+  reloadGameBtn.setAttribute('disabled', 'true');
+};
+
+console.log(reloadGameBtn);

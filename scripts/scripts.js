@@ -254,7 +254,7 @@ class Resource {
     this.y = (Math.floor(Math.random() * 5) + 1) * cellSize + 25;
     this.width = cellSize * 0.5;
     this.height = cellSize * 0.5;
-    this.amount = 30;
+    this.amount = 15;
   }
 
   draw() {
@@ -264,7 +264,7 @@ class Resource {
 }
 
 function handleResources() {
-  if (frame % 200 === 0 && score < winningScore) {
+  if (frame % 100 === 0 && score < winningScore) {
     resources.push(new Resource());
   }
   for (let i = 0; i < resources.length; i++) {

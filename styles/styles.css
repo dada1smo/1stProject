@@ -1,6 +1,6 @@
 body {
-  background: #25409a;
-  background-image: url(img/bg.svg);
+  background-image: url(../img/bg.svg);
+  background-color: #25409a;
   font-family: 'Big Shoulders Stencil Text', sans-serif;
   font-size: 16px;
 }

@@ -3,23 +3,36 @@ const ctx = canvas.getContext('2d');
 canvas.width = 800;
 canvas.height = 600;
 
+const bigShoulders = 'Big Shoulders Stencil Text';
+
 // globals
 const cellSize = 100;
+const headerSize = 100;
 const cellGap = 4;
 const gameGrid = [];
 const towers = [];
 const towerCost = 100;
 const invaders = [];
 const invaderPositions = [];
-const invaderInterval = 600;
 const projectiles = [];
 const resources = [];
 
 let numberOfResources = 300;
 let frame = 0;
+let invaderInterval = 600;
 let gameOver = false;
 let score = 0;
-let winningScore = 100;
+let winningScore = 400;
+
+// images
+const gotinha = new Image();
+gotinha.src = 'img/gotinha.png';
+const vacina = new Image();
+vacina.src = 'img/vacina.png';
+const virus = new Image();
+virus.src = 'img/virus.png';
+const sus = new Image();
+sus.src = 'img/sus.png';
 
 const mouse = {
   x: 0,
@@ -41,6 +54,10 @@ canvas.addEventListener('mouseleave', function () {
 });
 
 // board
+const controlBar = {
+  width: canvas.width,
+  height: headerSize,
+};
 class Cell {
   constructor(x, y) {
     this.x = x;
@@ -63,7 +80,7 @@ class Cell {
 }
 
 function createGrid() {
-  for (let y = 0; y < canvas.height; y += cellSize) {
+  for (let y = headerSize; y < canvas.height; y += cellSize) {
     for (let x = 0; x < canvas.width; x += cellSize) {
       gameGrid.push(new Cell(x, y));
     }
@@ -82,8 +99,8 @@ class Projectile {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.width = 10;
-    this.height = 10;
+    this.width = 60;
+    this.height = 60;
     this.power = 20;
     this.speed = 5;
   }
@@ -91,10 +108,11 @@ class Projectile {
     this.x += this.speed;
   }
   draw() {
-    ctx.fillStyle = 'black';
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.width, 0, Math.PI * 2);
-    ctx.fill();
+    // ctx.fillStyle = 'black';
+    // ctx.beginPath();
+    // ctx.arc(this.x, this.y, this.width, 0, Math.PI * 2);
+    // ctx.fill();
+    ctx.drawImage(vacina, this.x, this.y, this.width, this.height);
   }
 }
 
@@ -137,21 +155,17 @@ class Tower {
 
   draw() {
     ctx.fillStyle = 'blue';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = 'red';
-    ctx.font = '20px Helvetica';
-    ctx.fillText(
-      Math.floor(this.health),
-      this.x + cellSize / 2,
-      this.y + cellSize / 2
-    );
+    ctx.drawImage(gotinha, this.x, this.y, this.width, this.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `20px ${bigShoulders}`;
+    ctx.fillText(Math.floor(this.health), this.x + cellSize - 32, this.y + 32);
   }
   update() {
     if (this.shooting) {
       this.timer++;
       if (this.timer % 100 === 0) {
         projectiles.push(
-          new Projectile(this.x + cellSize / 2, this.y + cellSize / 2)
+          new Projectile(this.x + cellSize / 4, this.y + cellSize / 4)
         );
       }
     } else {
@@ -200,14 +214,10 @@ class Invader {
   }
   draw() {
     ctx.fillStyle = 'black';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = 'red';
-    ctx.font = '20px Helvetica';
-    ctx.fillText(
-      Math.floor(this.health),
-      this.x + cellSize / 2,
-      this.y + cellSize / 2
-    );
+    ctx.drawImage(virus, this.x, this.y, this.width, this.height);
+    ctx.fillStyle = '#DB4747';
+    ctx.font = `20px ${bigShoulders}`;
+    ctx.fillText(Math.floor(this.health), this.x + cellSize - 8, this.y + 20);
   }
 }
 
@@ -228,34 +238,30 @@ function handleInvaders() {
       i--;
     }
   }
-  if (frame % invaderInterval === 0) {
+  if (frame % invaderInterval === 0 && score < winningScore) {
     let verticalPosition = Math.floor(Math.random() * 5 + 1) * cellSize;
     invaders.push(new Invader(verticalPosition));
     invaderPositions.push(verticalPosition);
 
-    if (invaderInterval < 120) {
+    if (invaderInterval > 120) {
       invaderInterval -= 50;
     }
   }
 }
 
 // resources
-const amounts = [20, 30, 40];
 class Resource {
   constructor() {
     this.x = Math.random() * (canvas.width - cellSize);
     this.y = (Math.floor(Math.random() * 5) + 1) * cellSize + 25;
-    this.width = cellSize * 0.6;
-    this.height = cellSize * 0.6;
-    this.amount = amounts[Math.floor(Math.random() * amounts.length)];
+    this.width = cellSize * 0.5;
+    this.height = cellSize * 0.5;
+    this.amount = 30;
   }
 
   draw() {
     ctx.fillStyle = 'purple';
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.fillStyle = 'black';
-    ctx.font = '20px Helvetica';
-    ctx.fillText(this.amount, this.x + 15, this.y + 25);
+    ctx.drawImage(sus, this.x, this.y, this.width, this.height);
   }
 }
 
@@ -276,6 +282,7 @@ function handleResources() {
 canvas.addEventListener('click', function () {
   const gridPositionX = mouse.x - (mouse.x % cellSize) + cellGap;
   const gridPositionY = mouse.y - (mouse.y % cellSize) + cellGap;
+  if (gridPositionY < headerSize) return;
   for (let i = 0; i < towers.length; i++) {
     if (towers[i].x === gridPositionX && towers[i].y === gridPositionY) return;
   }
@@ -288,12 +295,16 @@ canvas.addEventListener('click', function () {
 
 // helpers
 function handleGameStatus() {
-  ctx.fillStyle = 'black';
-  ctx.font = '20px Helvetica';
-  ctx.fillText(`Resources: ${numberOfResources}`, 0, 60);
-  ctx.fillStyle = 'black';
-  ctx.font = '20px Helvetica';
-  ctx.fillText(`Score: ${score}`, 200, 60);
+  ctx.fillStyle = '#1B317A';
+  ctx.fillRect(20, 20, 240, 60);
+  ctx.font = `40px ${bigShoulders}`;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(`Valores: ${numberOfResources}`, 64, 64);
+  ctx.fillStyle = '#1B317A';
+  ctx.fillRect(540, 20, 240, 60);
+  ctx.font = `40px ${bigShoulders}`;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText(`Pontuação: ${score}`, 576, 64);
 
   if (gameOver) {
     ctx.fillStyle = 'black';
@@ -321,15 +332,12 @@ function animate() {
   frame++;
   if (!gameOver && score < winningScore) {
     reqAnim = requestAnimationFrame(animate);
-    console.log(reqAnim);
   }
 }
 
 function stopAnimation() {
   cancelAnimationFrame(reqAnim);
   reqAnim = 0;
-  console.log(reqAnim);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function collision(first, second) {
@@ -349,17 +357,25 @@ window.addEventListener('resize', () => {
   canvasPosition = canvas.getBoundingClientRect();
 });
 
+window.addEventListener('scroll', () => {
+  canvasPosition = canvas.getBoundingClientRect();
+});
+
 const startGameBtn = document.getElementById('startGame');
+const pauseGameBtn = document.getElementById('pauseGame');
 const reloadGameBtn = document.getElementById('reloadGame');
 startGameBtn.onclick = () => {
   animate();
-  startGameBtn.setAttribute('disabled', 'true');
-  reloadGameBtn.removeAttribute('disabled');
+  startGameBtn.setAttribute('class', 'disabled');
+  pauseGameBtn.removeAttribute('class', 'disabled');
+};
+pauseGameBtn.onclick = () => {
+  stopAnimation();
+  startGameBtn.removeAttribute('class', 'disabled');
+  pauseGameBtn.setAttribute('class', 'disabled');
 };
 reloadGameBtn.onclick = () => {
-  stopAnimation();
-  startGameBtn.removeAttribute('disabled');
-  reloadGameBtn.setAttribute('disabled', 'true');
+  location.reload();
 };
 
-console.log(reloadGameBtn);
+console.log(numberOfResources);

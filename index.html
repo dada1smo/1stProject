@@ -4,14 +4,27 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Text:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="styles/styles.css" />
     <title>Tower Defense</title>
   </head>
   <body>
-    <h1>Tower Defense</h1>
-    <button id="startGame">Start Game</button>
-    <button id="reloadGame" disabled>Reload Game</button>
-    <canvas id="canvasBoard"></canvas>
+    <h1>Zé Gotinha VS Micróbio FDP</h1>
+    <div class="gameActions">
+      <a href="#" id="startGame"><img src="/img/play.png" /></a>
+      <a href="#" id="pauseGame" class="disabled"
+        ><img src="/img/pause.png"
+      /></a>
+      <a href="#" id="reloadGame"><img src="/img/restart.png" /></a>
+    </div>
+    <div class="canvasArea">
+      <canvas id="canvasBoard"></canvas>
+    </div>
 
     <script src="scripts/scripts.js"></script>
   </body>

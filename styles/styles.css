@@ -1,5 +1,6 @@
 body {
-  background-image: url(/img/bg.svg);
+  background: #25409a;
+  background-image: url(img/bg.svg);
   font-family: 'Big Shoulders Stencil Text', sans-serif;
   font-size: 16px;
 }
@@ -10,6 +11,10 @@ h1 {
   font-weight: 700;
   font-size: 4rem;
   text-align: center;
+}
+
+h1 span {
+  color: #db4747;
 }
 
 .gameActions {

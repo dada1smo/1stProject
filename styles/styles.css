@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-image: url(../img/bg.svg);
   background-color: #25409a;
@@ -11,17 +15,39 @@ h1 {
   font-weight: 700;
   font-size: 4rem;
   text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 h1 span {
   color: #db4747;
 }
 
+.gameInstructions {
+  width: 800px;
+  margin: 0 auto;
+  background: #1b317a;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: #ffffff;
+  font-size: 1rem;
+  font-family: 'Helvetica', sans-serif;
+}
+
+.gameInstructions summary {
+  color: #eac462;
+}
+
+.gameInstructions p {
+  margin-top: 1.25rem;
+  line-height: 1.5rem;
+}
+
 .gameActions {
   display: flex;
   justify-content: center;
   gap: 32px;
-  margin-bottom: 40px;
+  margin-bottom: 1rem;
 }
 
 a img {
@@ -39,7 +65,7 @@ a.disabled img {
 
 .canvasArea {
   position: relative;
-  min-height: 800px;
+  min-height: 640px;
   height: 100%;
 }
 

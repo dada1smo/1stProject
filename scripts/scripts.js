@@ -17,7 +17,7 @@ const invaderPositions = [];
 const projectiles = [];
 const resources = [];
 
-let numberOfResources = 300;
+let numberOfResources = 100;
 let frame = 0;
 let invaderInterval = 600;
 let gameOver = false;
@@ -101,17 +101,13 @@ class Projectile {
     this.y = y;
     this.width = 60;
     this.height = 60;
-    this.power = 20;
+    this.power = 10;
     this.speed = 5;
   }
   update() {
     this.x += this.speed;
   }
   draw() {
-    // ctx.fillStyle = 'black';
-    // ctx.beginPath();
-    // ctx.arc(this.x, this.y, this.width, 0, Math.PI * 2);
-    // ctx.fill();
     ctx.drawImage(vacina, this.x, this.y, this.width, this.height);
   }
 }
@@ -222,29 +218,31 @@ class Invader {
 }
 
 function handleInvaders() {
-  for (let i = 0; i < invaders.length; i++) {
-    invaders[i].update();
-    invaders[i].draw();
-    if (invaders[i].x < 0) {
-      gameOver = true;
+  if (score < winningScore) {
+    for (let i = 0; i < invaders.length; i++) {
+      invaders[i].update();
+      invaders[i].draw();
+      if (invaders[i].x < 0) {
+        gameOver = true;
+      }
+      if (invaders[i] && invaders[i].health <= 0) {
+        let loot = 30;
+        numberOfResources += loot;
+        score += 10;
+        const invaderIndex = invaderPositions.indexOf(invaders[i].y);
+        invaderPositions.splice(invaderIndex, 1);
+        invaders.splice(i, 1);
+        i--;
+      }
     }
-    if (invaders[i] && invaders[i].health <= 0) {
-      let loot = invaders[i].maxHealth;
-      numberOfResources += loot;
-      score += 10;
-      const invaderIndex = invaderPositions.indexOf(invaders[i].y);
-      invaderPositions.splice(invaderIndex, 1);
-      invaders.splice(i, 1);
-      i--;
-    }
-  }
-  if (frame % invaderInterval === 0 && score < winningScore) {
-    let verticalPosition = Math.floor(Math.random() * 5 + 1) * cellSize;
-    invaders.push(new Invader(verticalPosition));
-    invaderPositions.push(verticalPosition);
+    if (frame % invaderInterval === 0 && score < winningScore) {
+      let verticalPosition = Math.floor(Math.random() * 5 + 1) * cellSize;
+      invaders.push(new Invader(verticalPosition));
+      invaderPositions.push(verticalPosition);
 
-    if (invaderInterval > 120) {
-      invaderInterval -= 50;
+      if (invaderInterval > 120) {
+        invaderInterval -= 50;
+      }
     }
   }
 }
@@ -295,16 +293,18 @@ canvas.addEventListener('click', function () {
 
 // helpers
 function handleGameStatus() {
-  ctx.fillStyle = '#1B317A';
-  ctx.fillRect(20, 20, 240, 60);
-  ctx.font = `40px ${bigShoulders}`;
+  ctx.font = `20px ${bigShoulders}`;
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(`Valores: ${numberOfResources}`, 64, 64);
-  ctx.fillStyle = '#1B317A';
-  ctx.fillRect(540, 20, 240, 60);
+  ctx.fillText('Doses', 32, 40);
   ctx.font = `40px ${bigShoulders}`;
+  ctx.fillStyle = '#EAC462';
+  ctx.fillText(`${numberOfResources}`, 32, 80);
+  ctx.font = `20px ${bigShoulders}`;
   ctx.fillStyle = '#ffffff';
-  ctx.fillText(`Pontuação: ${score}`, 576, 64);
+  ctx.fillText('Imunizações', 120, 40);
+  ctx.font = `40px ${bigShoulders}`;
+  ctx.fillStyle = '#EAC462';
+  ctx.fillText(`${score}`, 120, 80);
 
   if (gameOver) {
     ctx.fillStyle = 'black';
@@ -312,7 +312,7 @@ function handleGameStatus() {
     ctx.fillText('GAME OVER', 135, 320);
   }
 
-  if (score >= winningScore && invaders.length === 0) {
+  if (score >= winningScore) {
     ctx.fillStyle = 'black';
     ctx.font = '60px Helvetica';
     ctx.fillText('YOU WON!', 135, 320);
@@ -330,8 +330,11 @@ function animate() {
   handleResources();
   handleGameStatus();
   frame++;
-  if (!gameOver && score < winningScore) {
+  if (!gameOver) {
     reqAnim = requestAnimationFrame(animate);
+  }
+  if (score >= winningScore) {
+    stopAnimation();
   }
 }
 

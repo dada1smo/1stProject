@@ -31,16 +31,28 @@ h1 span {
   margin-bottom: 2rem;
   color: #ffffff;
   font-size: 1rem;
-  font-family: 'Helvetica', sans-serif;
+  font-family: 'Inter', 'Helvetica', sans-serif;
+  font-weight: 400;
 }
 
 .gameInstructions summary {
   color: #eac462;
+  font-weight: 700;
 }
 
 .gameInstructions p {
   margin-top: 1.25rem;
   line-height: 1.5rem;
+}
+
+.instructionYellow {
+  color: #eac462;
+  font-weight: 700;
+}
+
+.instructionRed {
+  color: #db4747;
+  font-weight: 700;
 }
 
 .gameActions {

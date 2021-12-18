@@ -24,3 +24,4 @@ This is a Plants VS Zombies-inspired tower defense game where you will need to c
 
 # Credits
 - Emojis taken from [Emojipedia](https://emojipedia.org/) (custom Zé Gotinha made by me).
+- Background music is [AdhesiveWombat - Night Shade](https://www.youtube.com/watch?v=py60u7pnRUA).

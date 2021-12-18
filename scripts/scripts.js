@@ -170,6 +170,49 @@ class Tower {
   }
 }
 
+class Sfx {
+  constructor() {
+    this.shot = document.createElement('audio');
+    this.shot.src = './sounds/tiro.mp3';
+    this.shot.setAttribute('preload', 'auto');
+    this.shot.loop = false;
+    this.shot.setAttribute('controls', 'none');
+    this.shot.style.display = 'none';
+    this.shot.volume = 0.06;
+    this.music = document.createElement('audio');
+    this.music.src = './sounds/AdhesiveWombat_-_Night_Shade.mp3';
+    this.music.setAttribute('preload', 'auto');
+    this.music.loop = true;
+    this.music.setAttribute('controls', 'none');
+    this.music.style.display = 'none';
+    this.music.volume = 0.05;
+  }
+
+  playShot() {
+    if (this.shot.paused) {
+      this.shot.play();
+    } else {
+      this.shot.currentTime = 0;
+    }
+  }
+
+  stopShot() {
+    this.shot.pause();
+  }
+
+  playMusic() {
+    if (this.music.paused) {
+      this.music.play();
+    } else {
+      this.music.currentTime = 0;
+    }
+  }
+
+  stopMusic() {
+    this.music.pause();
+  }
+}
+
 function handleTowers() {
   for (let i = 0; i < towers.length; i++) {
     towers[i].draw();
@@ -199,7 +242,7 @@ class Invader {
     this.y = verticalPosition;
     this.width = cellSize;
     this.height = cellSize;
-    this.speed = Math.random() * 0.2 + 0.4;
+    this.speed = Math.random() * 0.2 + 0.3;
     this.movement = this.speed;
     this.health = 100;
     this.maxHealth = this.health;
@@ -209,7 +252,6 @@ class Invader {
     this.x -= this.movement;
   }
   draw() {
-    ctx.fillStyle = 'black';
     ctx.drawImage(virus, this.x, this.y, this.width, this.height);
     ctx.fillStyle = '#DB4747';
     ctx.font = `20px ${bigShoulders}`;
@@ -307,16 +349,31 @@ function handleGameStatus() {
   ctx.fillText(`${score}`, 120, 80);
 
   if (gameOver) {
-    ctx.fillStyle = 'black';
-    ctx.font = '60px Helvetica';
-    ctx.fillText('GAME OVER', 135, 320);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(virus, 100, 120, cellSize, cellSize);
+    ctx.fillStyle = '#DB4747';
+    ctx.font = `60px ${bigShoulders}`;
+    ctx.fillText('VOCÊ PERDEU :(', 100, 320);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `24px ${bigShoulders}`;
+    ctx.fillText('Mas não desista, tente novamente!', 100, 360);
   }
 
   if (score >= winningScore) {
-    ctx.fillStyle = 'black';
-    ctx.font = '60px Helvetica';
-    ctx.fillText('YOU WON!', 135, 320);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(gotinha, 100, 120, cellSize, cellSize);
+    ctx.fillStyle = '#EAC462';
+    ctx.font = `60px ${bigShoulders}`;
+    ctx.fillText('VOCÊ VENCEU O VÍRUS!', 100, 320);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `24px ${bigShoulders}`;
+    ctx.fillText('PROTEJA O SUS, GOSTOSO DEMAIS', 100, 360);
   }
+
+  // if (projectiles.length >= 1) {
+  //   const shootingSound = new Sfx();
+  //   shootingSound.playShot();
+  // }
 }
 
 let reqAnim;
@@ -367,18 +424,19 @@ window.addEventListener('scroll', () => {
 const startGameBtn = document.getElementById('startGame');
 const pauseGameBtn = document.getElementById('pauseGame');
 const reloadGameBtn = document.getElementById('reloadGame');
+const bgMusic = new Sfx();
 startGameBtn.onclick = () => {
   animate();
   startGameBtn.setAttribute('class', 'disabled');
   pauseGameBtn.removeAttribute('class', 'disabled');
+  bgMusic.playMusic();
 };
 pauseGameBtn.onclick = () => {
   stopAnimation();
   startGameBtn.removeAttribute('class', 'disabled');
   pauseGameBtn.setAttribute('class', 'disabled');
+  bgMusic.stopMusic();
 };
 reloadGameBtn.onclick = () => {
   location.reload();
 };
-
-console.log(numberOfResources);

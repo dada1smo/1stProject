@@ -180,7 +180,7 @@ class Sfx {
     this.shot.style.display = 'none';
     this.shot.volume = 0.06;
     this.music = document.createElement('audio');
-    this.music.src = './sounds/AdhesiveWombat_-_Night_Shade.mp3';
+    this.music.src = './sounds/Jeremy_Blake_-_Powerup.mp3';
     this.music.setAttribute('preload', 'auto');
     this.music.loop = true;
     this.music.setAttribute('controls', 'none');
